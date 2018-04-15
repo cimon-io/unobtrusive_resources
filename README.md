@@ -8,6 +8,14 @@ Example:
 ```ruby
 class BotsController < ApplicationController
   # ...
+
+  unobtrusive finder_method: :find_by_slug!,
+              find_for_create_by: :slug,
+              resource_class: Bot,
+              relationship_name: :bots,
+              permitted_params_key: :bot,
+              permitted_params_create_value: %i[name code],
+              permitted_params_update_value: %i[name code]
   def index
     respond_with(collection)
   end
@@ -39,7 +47,18 @@ class BotsController < ApplicationController
 end
 ```
 
-In real-life projects most resource related actions will be a bit more complicated.
+Keep in mind, that following methods should be defined (or configured with `unobtrusive` method call) in order to make default configuration to work properly:
+
+  - `relationship_name`
+  - `resource_class`
+  - `find_for_create_by`
+  - `permitted_params_key`
+  - `permitted_params_create_value`
+  - `permitted_params_update_value`
+  - `parent_class`
+  - `parent_permitted_params_key`
+
+For real-life projects most resource related actions will be a bit more complicated.
 In such cases we can easily change underlying logic for, say, resource creation (redefine method):
 
 ```ruby
