@@ -16,27 +16,42 @@ module UnobtrusiveResources
 
   #  :parent_class
   #  :parent_permitted_params_key
+  included do
+    private_class_method :unobtrusive_method
+    private_class_method :safe_unobtrusive_method
+  end
 
   class_methods do
     def unobtrusive_method(method_name, &block)
+      return method_name if private_method_defined?(method_name)
       return method_name if method_defined?(method_name)
+
       define_method(method_name, &block)
+      private method_name
+    end
+
+    def safe_unobtrusive_method(method_name, value)
+      if value.respond_to?(:call)
+        unobtrusive_method(method_name, &value)
+      else
+        unobtrusive_method(method_name) { value }
+      end
     end
 
     def unobtrusive(options)
       helper_method :resource,
                     :resource_class,
                     :resource_name,
+                    :resource_collection_name,
                     :resource_route,
                     :resource_url,
                     :new_resource_url,
                     :collection,
-                    :resource_collection_name,
                     :collection_route,
                     :collection_url
 
       options.each do |key, value|
-        unobtrusive_method key, &(value.respond_to?(:call) ? value : -> { value })
+        safe_unobtrusive_method(key, value)
       end
 
       unobtrusive_method :collection do
@@ -157,6 +172,8 @@ module UnobtrusiveResources
           instance_variable_get(:@_parent)
         end
 
+        # TODO: Rename `unoptrusive_parent_params` => `unobtrusive_parent_params`
+        # Check if this method is used in existing repositories.
         unobtrusive_method :unoptrusive_parent_params do
           params
         end
@@ -184,9 +201,7 @@ module UnobtrusiveResources
         unobtrusive_method :parent_route do |*args|
           [parent, *args]
         end
-      end
 
-      if method_defined?(:parent_class)
         unobtrusive_method :begin_of_association_chain do
           parent
         end
