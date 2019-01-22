@@ -27,7 +27,7 @@ module UnobtrusiveResources
       return method_name if method_defined?(method_name)
 
       define_method(method_name, &block)
-      private method_name
+      protected method_name
     end
 
     def safe_unobtrusive_method(method_name, value)
