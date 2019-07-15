@@ -46,6 +46,7 @@ module UnobtrusiveResources
                     :resource_route,
                     :resource_url,
                     :new_resource_url,
+                    :edit_resource_url,
                     :collection,
                     :collection_route,
                     :collection_url
@@ -77,6 +78,13 @@ module UnobtrusiveResources
         )
       end
 
+      unobtrusive_method :create_resource do
+        instance_variable_set(
+          :@_resource,
+          end_of_association_chain.build.tap { |r| r.update(permitted_params) }
+        )
+      end
+
       unobtrusive_method :update_resource do
         resource.update(permitted_params)
       end
@@ -89,8 +97,12 @@ module UnobtrusiveResources
         begin_of_association_chain.public_send(relationship_name)
       end
 
-      unobtrusive_method :association_chain_with_includes do
+      unobtrusive_method :association_chain_with_accessible do
         association_chain
+      end
+
+      unobtrusive_method :association_chain_with_includes do
+        association_chain_with_accessible
       end
 
       unobtrusive_method :end_of_association_chain do
@@ -110,11 +122,11 @@ module UnobtrusiveResources
       end
 
       unobtrusive_method :resource_collection_name do
-        resource_class.model_name.plural
+        resource_class.model_name.human(count: 2)
       end
 
       unobtrusive_method :resource_name do
-        resource_class.model_name.singular
+        resource_class.model_name.human(count: 1)
       end
 
       # TODO: remove this method.
@@ -132,7 +144,7 @@ module UnobtrusiveResources
       end
 
       unobtrusive_method :collection_url do |*args|
-        url_for(collection_route(args))
+        url_for(collection_route(*args))
       end
 
       unobtrusive_method :collection_route do |*args|
@@ -187,11 +199,11 @@ module UnobtrusiveResources
         end
 
         unobtrusive_method :parent_collection_name do
-          parent_class.model_name.plural
+          parent_class.model_name.human(count: 2)
         end
 
         unobtrusive_method :parent_name do
-          parent_class.model_name.singular
+          parent_class.model_name.human(count: 1)
         end
 
         unobtrusive_method :parent_url do |*args|
@@ -202,6 +214,9 @@ module UnobtrusiveResources
           [parent, *args]
         end
 
+      end
+
+      if method_defined?(:parent_class)
         unobtrusive_method :begin_of_association_chain do
           parent
         end
