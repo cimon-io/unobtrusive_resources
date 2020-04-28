@@ -122,11 +122,11 @@ module UnobtrusiveResources
       end
 
       unobtrusive_method :resource_collection_name do
-        resource_class.model_name.human(count: 2)
+        resource_class.model_name.plural
       end
 
       unobtrusive_method :resource_name do
-        resource_class.model_name.human(count: 1)
+        resource_class.model_name.singular
       end
 
       # TODO: remove this method.
@@ -199,11 +199,11 @@ module UnobtrusiveResources
         end
 
         unobtrusive_method :parent_collection_name do
-          parent_class.model_name.human(count: 2)
+          parent_class.model_name.plural
         end
 
         unobtrusive_method :parent_name do
-          parent_class.model_name.human(count: 1)
+          parent_class.model_name.singular
         end
 
         unobtrusive_method :parent_url do |*args|
