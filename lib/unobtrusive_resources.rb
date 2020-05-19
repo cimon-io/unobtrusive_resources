@@ -176,7 +176,7 @@ module UnobtrusiveResources
       end
 
       # parent methods
-      if method_defined?(:parent_class)
+      if method_defined?(:parent_class) || private_method_defined?(:parent_class)
         helper_method :parent, :parent_class, :parent_name, :parent_collection_name, :parent_url
 
         unobtrusive_method :parent do
@@ -216,7 +216,7 @@ module UnobtrusiveResources
 
       end
 
-      if method_defined?(:parent_class)
+      if method_defined?(:parent_class) || private_method_defined?(:parent_class)
         unobtrusive_method :begin_of_association_chain do
           parent
         end
