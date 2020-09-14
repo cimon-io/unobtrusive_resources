@@ -147,10 +147,6 @@ module UnobtrusiveResources
         url_for(collection_route(*args))
       end
 
-      unobtrusive_method :collection_route do |*args|
-        [relationship_name, *args]
-      end
-
       unobtrusive_method :resource_url do |*args|
         url_for(resource_route(args))
       end
@@ -213,10 +209,11 @@ module UnobtrusiveResources
         unobtrusive_method :parent_route do |*args|
           [parent, *args]
         end
+        
+        unobtrusive_method :collection_route do |*args|
+          [relationship_name, *args]
+        end        
 
-      end
-
-      if method_defined?(:parent_class) || private_method_defined?(:parent_class)
         unobtrusive_method :begin_of_association_chain do
           parent
         end
@@ -224,6 +221,10 @@ module UnobtrusiveResources
         unobtrusive_method :begin_of_association_chain do
           OpenStruct.new(relationship_name => resource_class.all)
         end
+        
+        unobtrusive_method :collection_route do |*args|
+          [parent, relationship_name, *args]
+        end        
       end
     end
   end
