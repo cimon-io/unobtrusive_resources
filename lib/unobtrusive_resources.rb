@@ -211,7 +211,7 @@ module UnobtrusiveResources
         end
         
         unobtrusive_method :collection_route do |*args|
-          [relationship_name, *args]
+          [parent, relationship_name, *args]
         end        
 
         unobtrusive_method :begin_of_association_chain do
@@ -223,7 +223,7 @@ module UnobtrusiveResources
         end
         
         unobtrusive_method :collection_route do |*args|
-          [parent, relationship_name, *args]
+          [relationship_name, *args]
         end        
       end
     end
