@@ -126,7 +126,7 @@ module UnobtrusiveResources
       end
 
       unobtrusive_method :resource_name do
-        resource_class.model_name.singular
+        resource_class.model_name.singular.to_sym
       end
 
       # TODO: remove this method.
@@ -209,10 +209,10 @@ module UnobtrusiveResources
         unobtrusive_method :parent_route do |*args|
           [parent, *args]
         end
-        
+
         unobtrusive_method :collection_route do |*args|
           [parent, relationship_name, *args]
-        end        
+        end
 
         unobtrusive_method :begin_of_association_chain do
           parent
@@ -221,10 +221,10 @@ module UnobtrusiveResources
         unobtrusive_method :begin_of_association_chain do
           OpenStruct.new(relationship_name => resource_class.all)
         end
-        
+
         unobtrusive_method :collection_route do |*args|
           [relationship_name, *args]
-        end        
+        end
       end
     end
   end
